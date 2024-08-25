@@ -1,14 +1,24 @@
 from typing import Annotated
 from sqlalchemy.orm import Session 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 import models 
 from database import engine, sessionLocal
 from routers import auth, todo, admin, user
-
+from fastapi.templating import Jinja2Templates
+import os
 
 app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
+
+# templates = Jinja2Templates(directory = "todoApp/todo/templates")
+templates_dir = os.path.join(os.path.dirname(__file__), "templates")
+templates = Jinja2Templates(directory=templates_dir)
+
+
+@app.get("/")
+def homeindex(request: Request): 
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 app.include_router(todo.router)
