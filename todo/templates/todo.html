@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <!-- Welcome Section -->
+  <section class="welcome-section text-center">
+    <div class="container">
+        <h1 class="welcome-heading">Hello {{user.username}}</h1>
+        <p class="welcome-subheading">You're in your account</p>
+        
+        {% if todos %}
+          <!-- Table to display TODO items -->
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for todo in todos %}
+                {% if not todo.complete %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="todo-title">{{ todo.title }}</td>
+                    <td>{{ todo.description }}</td>
+                    <td><input type="checkbox" class="todo-checkbox" data-title="{{ loop.index }}"></td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>No TODO items found.</p>
+        {% endif %}
+        <a href="/todo/add-todo">
+          <button class="btn btn-primary" >Add Todo</button>
+        </a>
+       
+    </div>
+    
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const checkboxes = document.querySelectorAll('.todo-checkbox');
+
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          const row = this.closest('tr');
+          const titleCell = row.querySelector('.todo-title');
+
+          if (this.checked) {
+            titleCell.style.textDecoration = 'line-through';
+          } else {
+            titleCell.style.textDecoration = 'none';
+          }
+        });
+      });
+    });
+  </script>
+
+{% endblock %}

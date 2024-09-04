@@ -1,0 +1,37 @@
+{%extends 'layout.html'%}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row">
+        
+        <div class="col-12 col-sm-6 m-auto">
+            <h1 class="text-center"> Sign up</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form id="registerForm" >
+                        <input type="text" name="username" id="" class="form-control my-3" placeholder="Username">
+                        <input type="email" name="email" id="" class="form-control my-3" placeholder="Email">
+                        <input type="text" name="firstname" id="" class="form-control my-3" placeholder="First Name">
+                        <input type="text" name="lastname" id="" class="form-control my-3" placeholder="Last Name">
+                        <input type="text" name="role" id="" class="form-control my-3" placeholder="Role">
+                        <input type="tel" name="phone_number" id="" class="form-control my-3" placeholder="Phone Number">
+                        <input type="password" name="password" id="" class="form-control my-3" placeholder="Password" 
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
+                        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" 
+                        required>
+                        <input type="password" name="password2" id="" class="form-control my-3" placeholder="Verify Password">
+                           <div class="text-center mt-3">
+                            <button class="btn btn-primary" type="submit" >Sign up</button>
+                            <a href="/auth/login" class="btn btn-link nav-link">Already have an account?</a>
+
+                           </div> 
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src ="{{url_for('static', path='/js/base.js') }}" >
+
+{% endblock %}

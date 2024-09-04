@@ -1,16 +1,23 @@
 from typing import Annotated
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session 
-from fastapi import Depends, HTTPException, Path, APIRouter
+from fastapi import Depends, HTTPException, Path, APIRouter, Request, status
 import models 
 from database import sessionLocal
 from models import Todos
 from starlette import status
 from pydantic import BaseModel, Field
 from .auth import get_current_user
+from fastapi.templating import Jinja2Templates
+
+###Import Jinja2Template directory ####
+
+templates = Jinja2Templates(directory="templates")
+
 
 
 router = APIRouter(
-    prefix="/todoapp",
+    prefix="/todo",
     tags= ['databaseApp']
 )
 
@@ -19,7 +26,7 @@ class TodoRequest(BaseModel):
     title: str = Field(min_length=3)
     description: str = Field(min_length = 3, max_length=100)
     priority: int = Field(gt=0, lt=6)
-    complete: bool 
+    complete: bool = Field(default=False)
 
 
 def get_db(): 
@@ -31,6 +38,42 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
+
+def redirect_to_login(): 
+    redirect_response = RedirectResponse(url = "/auth/login", status_code = status.HTTP_302_FOUND)
+    redirect_response.delete_cookie(key="access_token")
+    return redirect_response
+
+# ##### Pages #######
+@router.get("/todo-page",response_class=HTMLResponse)
+async def todoPage(request:Request, db: db_dependency): 
+    try: 
+        token = request.cookies.get('access_token')
+        user = await get_current_user(token)
+
+        if user is None: 
+            print("Hello world")
+            return templates.TemplateResponse("register.html", {"request": request})
+        
+        todos = db.query(Todos).filter(Todos.owner_id == user.get("id")).all()
+
+        return templates.TemplateResponse("todo.html", {"request": request, "todos": todos, "user": user,})
+
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        return redirect_to_login()
+    
+
+#########End Page#####
+@router.get("/add-todo",response_class=HTMLResponse)
+async def addtodoPage(request:Request): 
+     return templates.TemplateResponse("add-to.html", {"request": request})
+    
+
+#########End Page#####
+
+
 
 
 

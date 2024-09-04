@@ -1,18 +1,13 @@
-<!DOCTYPE html>
+{% extends 'layout.html' %}
 
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        
-        <h1>
-            Welcome to FastAPI
-        </h1>
-    </body>
-</html>
+{% block content %}
+  <!-- Welcome Section -->
+  <section class="welcome-section text-center">
+    <div class="container">
+        <h1 class="welcome-heading">Welcome to Our Website!</h1>
+        <p class="welcome-subheading">We're glad to have you here. Explore and enjoy our content.</p>
+        <a href="/auth/login" class="btn btn-primary btn-lg">login</a>
+    </div>
+</section>
+<script src ="{{url_for('static', path='/js/base.js') }}" >
+{% endblock %}

@@ -1,5 +1,6 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from pytest import Session
 from models import Users
@@ -10,6 +11,8 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
+from fastapi.templating import Jinja2Templates
+import os
 
 router = APIRouter(
     prefix="/auth", 
@@ -41,12 +44,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get('sub')
-        user_id: int = payload.get('id')
-        user_role: str = payload.get('role')
-        if username is None or user_id is None:
+        id: int = payload.get('id')
+        role: str = payload.get('role')
+        if username is None or id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                 detail='Could not validate user.')
-        return {'username': username, 'id': user_id, 'role': user_role}
+        return {'username': username, 'id': id, 'role': role}
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user.')
@@ -77,6 +80,22 @@ db_dependency = Annotated[Session, Depends(get_db)]
 #bcrypt_context to decrept password in the database 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated = "auto")
 
+
+# Initialize Jinja2Templates with the correct directory
+templates = Jinja2Templates(directory="templates")
+
+# Define the endpoint for rendering the login page
+@router.get("/login", response_class=HTMLResponse)
+async def render_login_page(request: Request): 
+    return templates.TemplateResponse("login.html", {"request": request})
+### EndPoint ###
+
+@router.get("/register", response_class=HTMLResponse)
+async def render_login_page(request: Request): 
+    return templates.TemplateResponse("register.html", {"request": request})
+### EndPoint ###
+
+
 #user authendication 
 def user_authendication(username:str, password: str, db: Session):
     user = db.query(Users).filter(Users.username == username).first()
@@ -89,7 +108,7 @@ def user_authendication(username:str, password: str, db: Session):
        
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/registerUser", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency,
                       signupUser : CreateUserRequest): 
     signupUser2 = Users(
