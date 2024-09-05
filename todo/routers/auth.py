@@ -108,7 +108,7 @@ def user_authendication(username:str, password: str, db: Session):
        
 
 
-@router.post("/registerUser", status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency,
                       signupUser : CreateUserRequest): 
     signupUser2 = Users(

@@ -4,7 +4,7 @@
   <!-- Welcome Section -->
   <section class="welcome-section text-center">
     <div class="container">
-        <h1 class="welcome-heading">Hello {{user.username}}</h1>
+        <h1 class="welcome-heading">Hello {{user.email}}</h1>
         <p class="welcome-subheading">You're in your account</p>
         
         {% if todos %}
@@ -12,20 +12,26 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>#</th>
+                <th>Number</th>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Priority</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {% for todo in todos %}
                 {% if not todo.complete %}
-                  <tr>
+                  <tr data-id="{{ todo.id }}">
                     <td>{{ loop.index }}</td>
                     <td class="todo-title">{{ todo.title }}</td>
                     <td>{{ todo.description }}</td>
-                    <td><input type="checkbox" class="todo-checkbox" data-title="{{ loop.index }}"></td>
+                    <td>{{todo.priority}}<td>
+                    <td><input type="checkbox" class="todo-checkbox" data-id="{{ todo.id }}"></td>
+                    <td>
+                      <button class="btn btn-primary btn-sm delete-btn" id="deleteBtn-{{ todo.id }}" style="display: none; ">Delete</button>
+                    </td>
                   </tr>
                 {% endif %}
               {% endfor %}
@@ -35,30 +41,14 @@
           <p>No TODO items found.</p>
         {% endif %}
         <a href="/todo/add-todo">
-          <button class="btn btn-primary" >Add Todo</button>
+          <button class="btn btn-primary">Add Todo</button>
         </a>
-       
     </div>
-    
-  </section>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const checkboxes = document.querySelectorAll('.todo-checkbox');
-
-      checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-          const row = this.closest('tr');
-          const titleCell = row.querySelector('.todo-title');
-
-          if (this.checked) {
-            titleCell.style.textDecoration = 'line-through';
-          } else {
-            titleCell.style.textDecoration = 'none';
-          }
-        });
-      });
-    });
-  </script>
-
+  <script src ="{{url_for('static', path='/js/login.js') }}" ></script>
+    <script src ="{{url_for('static', path='/js/editTodo.js') }}" ></script>
+    <script src ="{{url_for('static', path='/js/register.js') }}" ></script>
+    <script src ="{{url_for('static', path='/js/register.js') }}" ></script>
+    <script src ="{{url_for('static', path='/js/addTodo.js') }}" ></script>
+    <script src ="{{url_for('static', path='/js/deleteTodo.js') }} " ></script>
+    <script src ="{{url_for('static', path='/js/utilities.js') }} " ></script>
 {% endblock %}

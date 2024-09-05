@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, Path, APIRouter, Request, status
 import models 
 from database import sessionLocal
-from models import Todos
+from models import Todos, Users
 from starlette import status
 from pydantic import BaseModel, Field
 from .auth import get_current_user
@@ -56,8 +56,9 @@ async def todoPage(request:Request, db: db_dependency):
             return templates.TemplateResponse("register.html", {"request": request})
         
         todos = db.query(Todos).filter(Todos.owner_id == user.get("id")).all()
+        users = db.query(Users).filter(Users.id == user.get("id")).first()
 
-        return templates.TemplateResponse("todo.html", {"request": request, "todos": todos, "user": user,})
+        return templates.TemplateResponse("todo.html", {"request": request, "todos": todos, "user": users,})
 
     except Exception as e:
         # Log the exception if needed
